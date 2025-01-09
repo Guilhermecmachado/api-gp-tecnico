@@ -480,13 +480,26 @@ page2.drawText('R$' + dados_responsavel1.valor_renda_declarada_liquida.toString(
     font: font,
     color: rgb(0, 0, 0),
 });
-page2.drawText( dados_responsavel1.mes_referencia_renda_declarada, {
-    x: 381, // Ajuste conforme necessário
-    y: height - 233, // Ajuste conforme necessário
-    size: fontSize,
-    font: font,
-    color: rgb(0, 0, 0),
-});
+let mes_declarada =''
+if(dados_responsavel1.mes_referencia_renda_declarada == null || dados_responsavel1.mes_referencia_renda_declarada == undefined){
+    mes_declarada =''
+    page2.drawText( mes_declarada, {
+        x: 381, // Ajuste conforme necessário
+        y: height - 233, // Ajuste conforme necessário
+        size: fontSize,
+        font: font,
+        color: rgb(0, 0, 0),
+    });
+}else{
+    page2.drawText( dados_responsavel1.mes_referencia_renda_declarada, {
+        x: 381, // Ajuste conforme necessário
+        y: height - 233, // Ajuste conforme necessário
+        size: fontSize,
+        font: font,
+        color: rgb(0, 0, 0),
+    });
+}
+
 if(dados_responsavel1.beneficio_prestacao =='SIM'){
     page2.drawRectangle({
         x: 57, // Posição no eixo X
@@ -582,7 +595,7 @@ page2.drawText( dados_responsavel2.data_nascimento.replace(/\//g, '  '), {
             let nacionalidade2
             if (dados_responsavel2.pais == 'BRASIL' || dados_responsavel2.pais == 'brasil') {
                 nacionalidade2 = 1
-                page2.drawText(nacionalidade.toString(), {
+                page2.drawText(nacionalidade2.toString(), {
                     x: 253, // Ajuste conforme necessário
                     y: height - 596, // Ajuste conforme necessário
                     width: 18,
@@ -591,7 +604,7 @@ page2.drawText( dados_responsavel2.data_nascimento.replace(/\//g, '  '), {
                 });
             } else {
                 nacionalidade2 = 3
-                page2.drawText(nacionalidade.toString(), {
+                page2.drawText(nacionalidade2.toString(), {
                     x: 253, // Ajuste conforme necessário
                     y: height - 596, // Ajuste conforme necessário
                     width: 18,
