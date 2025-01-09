@@ -570,7 +570,59 @@ page2.drawText( dados_responsavel2.nome_completo, {
     color: rgb(0, 0, 0),
 });
 
+page2.drawText( dados_responsavel2.data_nascimento.replace(/\//g, '  '), {
+    x: 63, // Ajuste conforme necessário
+    y: height - 596, // Ajuste conforme necessário
+    size: fontSize,
+    font: font,
+    color: rgb(0, 0, 0),
+});
 
+            //nacionalidade
+            let nacionalidade2
+            if (dados_responsavel2.pais == 'BRASIL' || dados_responsavel2.pais == 'brasil') {
+                nacionalidade2 = 1
+                page2.drawText(nacionalidade.toString(), {
+                    x: 253, // Ajuste conforme necessário
+                    y: height - 596, // Ajuste conforme necessário
+                    width: 18,
+                    height: 10,
+                    color: rgb(0, 0, 0),
+                });
+            } else {
+                nacionalidade2 = 3
+                page2.drawText(nacionalidade.toString(), {
+                    x: 253, // Ajuste conforme necessário
+                    y: height - 596, // Ajuste conforme necessário
+                    width: 18,
+                    height: 10,
+                    color: rgb(0, 0, 0),
+                });
+            }
+            //cidade estado
+            page2.drawText(dados_responsavel2.uf, {
+                x: 407, // Ajuste conforme necessário
+                y: height - 596, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page2.drawText(dados_responsavel2.naturalidade, {
+                x: 430, // Ajuste conforme necessário
+                y: height - 596, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+
+
+            page2.drawText(req.body.nome_mae2, {
+                x: 60, // Ajuste conforme necessário
+                y: height - 632, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
 
             // Salvar o PDF gerado
             const pdfBytes = await pdfDoc.save();
