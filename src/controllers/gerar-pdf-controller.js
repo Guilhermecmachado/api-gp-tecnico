@@ -549,7 +549,22 @@ if(dados_responsavel1.menor_18 =='MENOR EMANCIPADO'){
 
 page2.drawText( dados_responsavel1.nome_tutor, {
     x: 60, // Ajuste conforme necessário
-    y: height - 520, // Ajuste conforme necessário
+    y: height - 488, // Ajuste conforme necessário
+    size: fontSize,
+    font: font,
+    color: rgb(0, 0, 0),
+});
+page2.drawText( dados_responsavel1.cpf_tutor, {
+    x: 398, // Ajuste conforme necessário
+    y: height - 488, // Ajuste conforme necessário
+    size: fontSize,
+    font: font,
+    color: rgb(0, 0, 0),
+});
+
+page2.drawText( dados_responsavel2.nome_completo, {
+    x: 60, // Ajuste conforme necessário
+    y: height - 549, // Ajuste conforme necessário
     size: fontSize,
     font: font,
     color: rgb(0, 0, 0),
