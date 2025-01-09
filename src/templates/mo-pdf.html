@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <title>Declaração de Beneficiário</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .label-title {
+            font-size: 10px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .custom-input {
+            border: none;
+            border-bottom: 1px solid #000; /* Linha inferior */
+            border-left: 1px solid #000; /* Linha esquerda */
+            height: 20px;
+            width: 100%;
+            padding: 0 5px; /* Espaçamento horizontal interno */
+            padding-left: 10px; /* Maior espaço na esquerda */
+            font-size: 10px;
+            font-family: "Arial", sans-serif;
+        }
+
+        .input-date {
+            display: inline-block;
+            width: 80px; /* Largura suficiente para data no formato dd/mm/aaaa */
+            text-align: center; /* Texto centralizado */
+        }
+
+        .container {
+            padding: 10px;
+            border: 1px solid #000; /* Borda externa */
+        }
+
+        .row {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h4><strong>DECLARAÇÃO DE BENEFICIÁRIO(A)(S)</strong></h4>
+            <h5>1. Dados Pessoais do Responsável Familiar</h5>
+        </div>
+
+        <!-- Data de Nascimento -->
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label class="label-title">Data de Nascimento:</label>
+                    <input type="text" class="custom-input input-date" placeholder="__/__/____" maxlength="10" name="data_nascimento">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
