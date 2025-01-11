@@ -4,6 +4,7 @@ const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const controller_responsavel = require('../services/cadastro-responsaveis-service');
 const controller_familia = require('../services/cadastro-demografico-service')
 const controller_controle = require('../services/cadastro-dados-controle-service')
+const controller_moradia = require('../services/cadastro-ocupacao-service')
 module.exports = {
     get: async (req, res) => {
         try {
@@ -15,6 +16,9 @@ module.exports = {
             const dados_responsavel2 = await controller_responsavel.buscarUm(projeto_id, numero_cadastro, 'segundoResponsavel');
             const dados_demografico = await controller_familia.buscarUm(projeto_id, numero_cadastro)
             const dados_controle = await controller_controle.buscarUm(projeto_id, numero_cadastro)
+            const existe_conjugue = await controller_familia.buscarUmConjugue(projeto_id,numero_cadastro)
+            const deficiencia = await controller_familia.buscarUmDeficiencia(projeto_id,numero_cadastro)
+            const moradia = await controller_moradia.buscarUm(projeto_id,numero_cadastro)
             // Carregar o PDF modelo
             const templatePath = path.resolve(process.cwd(), 'termosgerados', 'MO29881025.pdf');
             const templateBytes = fs.readFileSync(templatePath);
@@ -23,6 +27,8 @@ module.exports = {
             // Obter a primeira página do PDF
             const page = pdfDoc.getPages()[0];
             const page2 = pdfDoc.getPages()[1];
+            const page3 = pdfDoc.getPages()[2];
+            const page4 = pdfDoc.getPages()[3];
             const { width, height } = page.getSize();
 
             // Configurar a fonte
@@ -636,6 +642,510 @@ page2.drawText( dados_responsavel2.data_nascimento.replace(/\//g, '  '), {
                 font: font,
                 color: rgb(0, 0, 0),
             });
+
+            page2.drawText(req.body.nome_mae2, {
+                x: 60, // Ajuste conforme necessário
+                y: height - 632, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            
+            page2.drawText(dados_responsavel2.rg, {
+                x: 60, // Ajuste conforme necessário
+                y: height - 669, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page2.drawText(dados_responsavel2.rg_uf, {
+                x: 191, // Ajuste conforme necessário
+                y: height - 669, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page2.drawText(dados_responsavel2.uf, {
+                x: 307, // Ajuste conforme necessário
+                y: height - 669, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page2.drawText(dados_responsavel2.rg_data_expedicao.replace(/\//g, '  '), {
+                x: 341, // Ajuste conforme necessário
+                y: height - 669, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+
+            page2.drawText(dados_responsavel2.nis, {
+                x: 434, // Ajuste conforme necessário
+                y: height - 669, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+
+            page2.drawText(dados_responsavel2.cpf, {
+                x: 60, // Ajuste conforme necessário
+                y: height - 707, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+
+            if (dados_responsavel2.tipo_contato1 == 'RESIDENCIAL') {
+                page2.drawText(dados_responsavel2.contato1, {
+                    x: 60, // Ajuste conforme necessário
+                    y: height - 757, // Ajuste conforme necessário
+                    size: fontSize,
+                    font: font,
+                    color: rgb(0, 0, 0),
+                });
+            } else if (dados_responsavel2.tipo_contato1 == 'CELULAR') {
+                page2.drawText(dados_responsavel2.contato1, {
+                    x: 217, // Ajuste conforme necessário
+                    y: height - 757, // Ajuste conforme necessário
+                    size: fontSize,
+                    font: font,
+                    color: rgb(0, 0, 0),
+                });
+            } else if (dados_responsavel2.tipo_contato1 == 'RECADO') {
+                page2.drawText(dados_responsavel2.contato1, {
+                    x: 372, // Ajuste conforme necessário
+                    y: height - 757, // Ajuste conforme necessário
+                    size: fontSize,
+                    font: font,
+                    color: rgb(0, 0, 0),
+                });
+            }
+
+            //page3
+
+
+
+            if (existe_conjugue.estado_civil == 'SOLTEIRO') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 117, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            } else if (existe_conjugue.estado_civil == 'DIVORC./DESQ.') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 141, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            } else if (existe_conjugue.estado_civil == 'VIÚVO(A)') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 165, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            } else if (existe_conjugue.estado_civil == 'UNIÃO ESTÁVEL') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 189, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }
+
+            if (existe_conjugue.estudou_ate == '4ºANO ENS. FUND.') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 235, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            } else if (existe_conjugue.estudou_ate == '3ºANO ENS. FUND.' || existe_conjugue.estudou_ate == '2ºANO ENS. FUND.' || existe_conjugue.estudou_ate == '1ºANO ENS. FUND.') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 259, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }
+
+
+            //grau de instrucao fund 2
+            if (existe_conjugue.estudou_ate == '9ºANO ENS. FUND.') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 283, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            } else if ( existe_conjugue.estudou_ate == '8ºANO ENS. FUND.' || existe_conjugue.estudou_ate == '7ºANO ENS. FUND.' || existe_conjugue.estudou_ate == '6ºANO ENS. FUND.' || existe_conjugue.estudou_ate == '5ºANO ENS. FUND.') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 307, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }
+
+            //grau de instrucao medio 
+            
+            if (existe_conjugue.estudou_ate == '3ª SÉRIE ENS. MÉD.') {
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 235, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            } else if (existe_conjugue.estudou_ate == '2ª SÉRIE ENS. MÉD.' || existe_conjugue.estudou_ate == '1ª SÉRIE ENS. MÉD.') {
+                page3.drawRectangle({
+                    x: 348, // Posição no eixo X
+                    y: height - 235, // Posição no eixo Y
+                    width: 20.7, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }
+            //grau superior e analfabeto 
+            if (existe_conjugue.estudou_ate == 'NÍVEL SUPERIOR') {
+                page3.drawRectangle({
+                    x: 348, // Posição no eixo X
+                    y: height - 259, // Posição no eixo Y
+                    width: 20.7, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            } else if (existe_conjugue.estudou_ate == 'SEM ESCOLARIZAÇÃO') {
+                page3.drawRectangle({
+                    x: 348, // Posição no eixo X
+                    y: height - 283, // Posição no eixo Y
+                    width: 20.7, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+
+            } else {
+                // page3.drawRectangle({
+                //     x: 348, // Posição no eixo X
+                //     y: height - 307, // Posição no eixo Y
+                //     width: 20.7, // Largura do retângulo
+                //     height: 13, // Altura do retângulo
+                //     // Cor da borda (preto, nesse caso)
+                //     color: rgb(0, 0, 0)
+                // });
+            }
+
+
+            page3.drawText(dados_responsavel2.cpf_cnpj_fonte_pegadora, {
+                x: 60, // Ajuste conforme necessário
+                y: height - 397, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            const rawDate3 = dados_responsavel1.data_admissao; // Exemplo: "01012023"
+
+// Formatar a data com espaços
+const formattedDate3 = `${rawDate3.slice(0, 2)}  ${rawDate3.slice(2, 4)}  ${rawDate3.slice(4)}`;
+            page3.drawText(formattedDate3, {
+                x: 433, // Ajuste conforme necessário
+                y: height - 391, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page3.drawText('R$'+dados_responsavel2.valor_renda_bruta.toString(), {
+                x: 60, // Ajuste conforme necessário
+                y: height - 439, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page3.drawText('R$'+ dados_responsavel2.valor_renda_liquida.toString(), {
+                x: 244, // Ajuste conforme necessário
+                y: height - 439, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+
+            page3.drawText(dados_responsavel2.mes_referencia_renda, {
+                x: 404, // Ajuste conforme necessário
+                y: height - 439, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+
+            const rawDate4 = dados_responsavel1.data_admissao; // Exemplo: "01012023"
+
+// Formatar a data com espaços
+const formattedDate4 = `${rawDate4.slice(0, 2)}  ${rawDate4.slice(2, 4)}  ${rawDate4.slice(4)}`;
+            page3.drawText(formattedDate4, {
+                x: 60, // Ajuste conforme necessário
+                y: height - 498, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page3.drawText('R$'+dados_responsavel2.valor_renda_declarada_liquida.toString(), {
+                x: 224, // Ajuste conforme necessário
+                y: height - 499, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page3.drawText(dados_responsavel2.mes_referencia_renda_declarada, {
+                x: 382, // Ajuste conforme necessário
+                y: height - 499, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            
+            if(dados_responsavel2.beneficio_prestacao =='SIM'){
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 563, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }else{
+                page3.drawRectangle({
+                    x: 127, // Posição no eixo X
+                    y: height - 563, // Posição no eixo Y
+                    width: 20.7, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }
+            
+            if(dados_responsavel2.programa_bolsa_familia =='SIM'){
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 613, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }else{
+                page3.drawRectangle({
+                    x: 127, // Posição no eixo X
+                    y: height - 613, // Posição no eixo Y
+                    width: 20.7, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }
+            //menor 18
+            if(dados_responsavel2.menor_18 =='MENOR EMANCIPADO'){
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 661, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }else if(dados_responsavel2.menor_18 =='MENOR ASSISTIDO'){
+                page3.drawRectangle({
+                    x: 57, // Posição no eixo X
+                    y: height - 689, // Posição no eixo Y
+                    width: 20, // Largura do retângulo
+                    height: 13, // Altura do retângulo
+                    // Cor da borda (preto, nesse caso)
+                    color: rgb(0, 0, 0)
+                });
+            }
+            page3.drawText(dados_responsavel2.nome_tutor, {
+                x: 60, // Ajuste conforme necessário
+                y: height - 771, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            page3.drawText(dados_responsavel2.cpf_tutor, {
+                x: 403, // Ajuste conforme necessário
+                y: height - 771, // Ajuste conforme necessário
+                size: fontSize,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+//page 4
+if(existe_conjugue !=false){
+    page4.drawRectangle({
+        x: 57, // Posição no eixo X
+        y: height - 140, // Posição no eixo Y
+        width: 20, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        // Cor da borda (preto, nesse caso)
+        color: rgb(0, 0, 0)
+    });
+}else{
+    page4.drawRectangle({
+        x: 128, // Posição no eixo X
+        y: height - 140, // Posição no eixo Y
+        width: 20, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        // Cor da borda (preto, nesse caso)
+        color: rgb(0, 0, 0)
+    });
+}
+
+function quebrarTexto(texto, maxWidth, font, fontSize, page) {
+    const linhas = [];
+    let linhaAtual = '';
+
+    for (const palavra of texto.split(' ')) {
+        const larguraLinha = font.widthOfTextAtSize(linhaAtual + palavra + ' ', fontSize);
+        if (larguraLinha > maxWidth) {
+            linhas.push(linhaAtual.trim());
+            linhaAtual = palavra + ' ';
+        } else {
+            linhaAtual += palavra + ' ';
+        }
+    }
+
+    if (linhaAtual.trim()) {
+        linhas.push(linhaAtual.trim());
+    }
+
+    return linhas;
+}
+
+
+    if (deficiencia && deficiencia.length > 0) {
+        // Criar uma lista de nomes e CIDs
+        const nomes = deficiencia.map(item => item.nome_completo).join(', ');
+        const cids = deficiencia.map(item => item.cid).join(', ');
+
+        // Configurações para quebra de linha
+        const maxWidthNomes = 440; // Ajuste a largura máxima permitida para os nomes
+        const maxWidthCIDs = 360; // Ajuste a largura máxima permitida para os CIDs
+        const lineHeight = 12; // Altura entre as linhas
+        let y = height - 199; // Posição inicial no eixo Y
+
+        // Quebrar texto dos nomes e CIDs
+        const linhasNomes = quebrarTexto(nomes, maxWidthNomes, font, 9, page4);
+        const linhasCIDs = quebrarTexto(cids, maxWidthCIDs, font, 9, page4);
+
+        // Desenhar as linhas de nomes
+        for (const linha of linhasNomes) {
+            page4.drawText(linha, {
+                x: 60,
+                y: y,
+                size: 9,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            y -= lineHeight; // Avança para a próxima linha
+        }
+
+        // Resetar a posição Y para os CIDs
+        y = height - 199;
+
+        // Desenhar as linhas de CIDs
+        for (const linha of linhasCIDs) {
+            page4.drawText(linha, {
+                x: 385,
+                y: y,
+                size: 9,
+                font: font,
+                color: rgb(0, 0, 0),
+            });
+            y -= lineHeight; // Avança para a próxima linha
+        }
+    } 
+        // Caso não haja dados
+        
+if(moradia.adequacao_imovel =='SIM'){
+    page4.drawRectangle({
+        x: 57, // Posição no eixo X
+        y: height - 267, // Posição no eixo Y
+        width: 20, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        color: rgb(0, 0, 0)
+    });
+}else{
+    page4.drawRectangle({
+        x: 128, // Posição no eixo X
+        y: height - 267, // Posição no eixo Y
+        width: 20.7, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        color: rgb(0, 0, 0)
+    });
+}
+
+if(req.body.pmcmvFar1 == true){
+    page4.drawRectangle({
+        x: 57, // Posição no eixo X
+        y: height - 478, // Posição no eixo Y
+        width: 17, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        color: rgb(0, 0, 0)
+    }); 
+}else{
+    page4.drawRectangle({
+        x: 57, // Posição no eixo X
+        y: height - 505, // Posição no eixo Y
+        width: 17, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        color: rgb(0, 0, 0)
+    });
+}
+
+if(req.body.pmcmvFds1 == true){
+    page4.drawRectangle({
+        x: 57, // Posição no eixo X
+        y: height - 566, // Posição no eixo Y
+        width: 17, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        color: rgb(0, 0, 0)
+    }); 
+}else{
+    page4.drawRectangle({
+        x: 57, // Posição no eixo X
+        y: height - 590, // Posição no eixo Y
+        width: 17, // Largura do retângulo
+        height: 13, // Altura do retângulo
+        color: rgb(0, 0, 0)
+    });
+}
+  
+
+ 
+
+
+
+
 
             // Salvar o PDF gerado
             const pdfBytes = await pdfDoc.save();

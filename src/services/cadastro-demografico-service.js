@@ -61,6 +61,38 @@ module.exports = {
         });
     },
 
+    buscarUmConjugue: (id, numero_cadastro) => {
+        return new Promise((aceito, rejeitado) => {
+
+            db.query('SELECT * FROM gta_cadastro_demografico_socio_economico WHERE projeto_id = ? AND numero_cadastro =? AND posicao_familia = "CÔNJUGE" ', [id, numero_cadastro], (error, results) => {
+                if (error) { rejeitado(error); return; }
+                if (results.length > 0) {
+                    aceito(results[0]);
+                } else {
+                    aceito(false);
+                }
+            });
+        });
+    },
+
+    buscarUmDeficiencia: (id, numero_cadastro) => {
+        return new Promise((aceito, rejeitado) => {
+            db.query(
+                'SELECT * FROM gta_cadastro_demografico_socio_economico WHERE projeto_id = ? AND numero_cadastro = ? AND pne IS NOT NULL AND pne != ""', 
+                [id, numero_cadastro], 
+                (error, results) => {
+                    if (error) { rejeitado(error); return; }
+                    if (results.length > 0) {
+                        aceito(results);
+                    } else {
+                        aceito(false);
+                    }
+                }
+            );
+        });
+    },
+    
+
     buscarUmForm: (id) => {
         return new Promise((aceito, rejeitado) => {
 
