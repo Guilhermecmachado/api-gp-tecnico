@@ -1,10 +1,16 @@
 const fs = require('fs');
 const path = require('path');
+const AWS = require('aws-sdk')
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const controller_responsavel = require('../services/cadastro-responsaveis-service');
 const controller_familia = require('../services/cadastro-demografico-service')
 const controller_controle = require('../services/cadastro-dados-controle-service')
 const controller_moradia = require('../services/cadastro-ocupacao-service')
+const cadastro_arquivo = require('../services/salva-pdf-service')
+const moment = require('moment'); // Para manipular datas
+
+
+
 module.exports = {
     get: async (req, res) => {
         try {
@@ -1140,22 +1146,58 @@ if(req.body.pmcmvFds1 == true){
     });
 }
   
+const pdfBytes = await pdfDoc.save(); // Certifique-se de que `pdfDoc` foi inicializado corretamente
 
- 
+// Caminho de saída
+const outputPath = path.resolve(process.cwd(), 'termosgerados', 'mo_preenchido.pdf');
+
+// Garantir que o diretório exista
+const dir = path.dirname(outputPath);
+if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+}
+
+// Salvar o PDF no sistema de arquivos
+fs.writeFileSync(outputPath, pdfBytes);
+
+// Configuração do AWS S3
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AMAZON_KEY_ACESS, // Configure isso nas variáveis de ambiente
+    secretAccessKey: process.env.SECRET_ACESS_KEY,
+    region: process.env.AWS_REGION // Exemplo: 'us-east-2'
+});
+
+// Ler o conteúdo do arquivo para upload
+const fileContent = fs.readFileSync(outputPath);
+
+// Parâmetros do upload
+const params = {
+    Bucket: process.env.AWS_BUCKET_NAME, // Nome do bucket
+    Key: `termosgerados/mo_preenchido-${dados_responsavel1.numero_cadastro}.pdf`, // Caminho e nome do arquivo no bucket
+    Body: fileContent,
+    ContentType: 'application/pdf' // Tipo de conteúdo
+};
+
+// Fazer o upload para o S3
+const uploadResult = await s3.upload(params).promise();
+const s3Url = uploadResult.Location;
+const dataCriacao = moment().format('DD/MM/YYYY');
+const fileName = `mo_preenchido-${dados_responsavel1.numero_cadastro}.pdf`;
 
 
 
+cadastro_arquivo.inserir(s3Url,dados_responsavel1.numero_cadastro,dados_responsavel1.nome_completo,fileName,dataCriacao)
 
 
-            // Salvar o PDF gerado
-            const pdfBytes = await pdfDoc.save();
+// Opcional: Excluir o arquivo local após o upload
+fs.unlinkSync(outputPath);
 
-            // Caminho de saída
-            const outputPath = path.resolve(process.cwd(), 'termosgerados', 'mo_preenchido.pdf');
-            fs.writeFileSync(outputPath, pdfBytes);
-
-            // Enviar o PDF gerado como resposta
-            return res.type('pdf').sendFile(outputPath);
+// Retornar a URL do arquivo no S3 e enviar o PDF gerado como resposta
+return res.status(200).json({
+    message: 'PDF salvo no S3 com sucesso!',
+    s3Url: uploadResult.Location
+});
+         
         } catch (error) {
             console.error('Erro ao gerar o PDF:', error);
             res.status(500).send('Erro ao gerar o PDF');
